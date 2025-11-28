@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -323,6 +324,7 @@ fun HomeTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
+            .statusBarsPadding()
             .background(
                 brush = Brush.horizontalGradient(
                     colors = listOf(PrimaryBlue, PrimaryBlueLight)
