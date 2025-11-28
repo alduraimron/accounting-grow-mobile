@@ -17,10 +17,11 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.CalendarToday
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -33,6 +34,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -49,7 +51,9 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.alduraimron.accountinggrow.ui.theme.Gray500
 import com.alduraimron.accountinggrow.ui.theme.PrimaryBlue
+import java.time.Instant
 import java.time.LocalDate
+import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -143,7 +147,7 @@ fun AddReminderScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Due Date
+            // ✅ Due Date with Material3 DatePicker
             OutlinedTextField(
                 value = selectedDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")),
                 onValueChange = {},
@@ -304,47 +308,45 @@ fun AddReminderScreen(
         }
     }
 
-    // Date Picker Dialog
+    // ✅ Material3 DatePicker Dialog dengan Calendar UI
     if (showDatePicker) {
-        AlertDialog(
+        val datePickerState = rememberDatePickerState(
+            initialSelectedDateMillis = selectedDate
+                .atStartOfDay(ZoneId.systemDefault())
+                .toInstant()
+                .toEpochMilli()
+        )
+
+        DatePickerDialog(
             onDismissRequest = { showDatePicker = false },
-            title = { Text("Pilih Tanggal") },
-            text = {
-                Column {
-                    TextButton(
-                        onClick = {
-                            selectedDate = LocalDate.now().plusDays(7)
-                            showDatePicker = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("7 Hari Lagi")
+            confirmButton = {
+                TextButton(
+                    onClick = {
+                        datePickerState.selectedDateMillis?.let { millis ->
+                            selectedDate = Instant.ofEpochMilli(millis)
+                                .atZone(ZoneId.systemDefault())
+                                .toLocalDate()
+                        }
+                        showDatePicker = false
                     }
-                    TextButton(
-                        onClick = {
-                            selectedDate = LocalDate.now().plusDays(14)
-                            showDatePicker = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("14 Hari Lagi")
-                    }
-                    TextButton(
-                        onClick = {
-                            selectedDate = LocalDate.now().plusMonths(1)
-                            showDatePicker = false
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Text("1 Bulan Lagi")
-                    }
+                ) {
+                    Text("OK", color = PrimaryBlue)
                 }
             },
-            confirmButton = {
+            dismissButton = {
                 TextButton(onClick = { showDatePicker = false }) {
-                    Text("Tutup")
+                    Text("Batal", color = Gray500)
                 }
             }
-        )
+        ) {
+            DatePicker(
+                state = datePickerState,
+                colors = androidx.compose.material3.DatePickerDefaults.colors(
+                    selectedDayContainerColor = PrimaryBlue,
+                    todayContentColor = PrimaryBlue,
+                    todayDateBorderColor = PrimaryBlue
+                )
+            )
+        }
     }
 }
