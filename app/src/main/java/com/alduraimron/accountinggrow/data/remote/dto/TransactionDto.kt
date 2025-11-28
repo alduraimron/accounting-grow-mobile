@@ -1,5 +1,8 @@
 package com.alduraimron.accountinggrow.data.remote.dto
 
+import com.alduraimron.accountinggrow.domain.model.Category
+import com.alduraimron.accountinggrow.domain.model.Transaction
+import com.alduraimron.accountinggrow.domain.model.TransactionType
 import com.google.gson.annotations.SerializedName
 
 // Transaction DTO
@@ -25,6 +28,35 @@ data class TransactionDto(
     @SerializedName("category")
     val category: CategoryDto?
 )
+
+// ✅ Extension function yang benar sesuai domain model
+fun TransactionDto.toTransaction(): Transaction {
+    return Transaction(
+        id = this.id,
+        userId = this.userId,
+        categoryId = this.categoryId,
+        type = when (this.type) {
+            "INCOME" -> TransactionType.INCOME
+            "EXPENSE" -> TransactionType.EXPENSE
+            else -> TransactionType.EXPENSE
+        },
+        nominal = this.nominal,
+        description = this.description,
+        date = this.date,
+        createdAt = this.createdAt,
+        category = this.category?.let {
+            Category(
+                id = it.id,
+                name = it.name,
+                type = when (it.type) {
+                    "INCOME" -> TransactionType.INCOME
+                    "EXPENSE" -> TransactionType.EXPENSE
+                    else -> TransactionType.EXPENSE
+                }
+            )
+        }
+    )
+}
 
 // Transaction Summary DTO
 data class TransactionSummaryDto(

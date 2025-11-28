@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.remote.api
 
 import com.alduraimron.accountinggrow.data.remote.dto.ApiResponse
 import com.alduraimron.accountinggrow.data.remote.dto.ReminderDto
+import com.alduraimron.accountinggrow.data.remote.dto.ReminderRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -31,13 +32,13 @@ interface ReminderApi {
 
     @POST("reminders")
     suspend fun createReminder(
-        @Body reminder: Map<String, Any>
+        @Body reminder: ReminderRequest
     ): Response<ApiResponse<ReminderDto>>
 
     @PUT("reminders/{id}")
     suspend fun updateReminder(
         @Path("id") id: String,
-        @Body reminder: Map<String, Any>
+        @Body reminder: ReminderRequest
     ): Response<ApiResponse<ReminderDto>>
 
     @PATCH("reminders/{id}/mark-paid")

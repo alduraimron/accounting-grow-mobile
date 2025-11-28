@@ -61,3 +61,8 @@ data class UserDto(
     @SerializedName("updatedAt")
     val updatedAt: String? = null
 )
+
+data class RefreshTokenRequest(
+    @SerializedName("refreshToken")
+    val refreshToken: String
+)

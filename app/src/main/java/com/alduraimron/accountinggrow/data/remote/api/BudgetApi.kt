@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.remote.api
 
 import com.alduraimron.accountinggrow.data.remote.dto.ApiResponse
 import com.alduraimron.accountinggrow.data.remote.dto.BudgetDto
+import com.alduraimron.accountinggrow.data.remote.dto.BudgetRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -27,13 +28,13 @@ interface BudgetApi {
 
     @POST("budgets")
     suspend fun createBudget(
-        @Body budget: Map<String, Any>
+        @Body budget: BudgetRequest
     ): Response<ApiResponse<BudgetDto>>
 
     @PUT("budgets/{id}")
     suspend fun updateBudget(
         @Path("id") id: String,
-        @Body budget: Map<String, Any>
+        @Body budget: BudgetRequest
     ): Response<ApiResponse<BudgetDto>>
 
     @DELETE("budgets/{id}")

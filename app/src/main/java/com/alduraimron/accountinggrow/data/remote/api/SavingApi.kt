@@ -1,7 +1,9 @@
 package com.alduraimron.accountinggrow.data.remote.api
 
+import com.alduraimron.accountinggrow.data.remote.dto.AddToSavingRequest
 import com.alduraimron.accountinggrow.data.remote.dto.ApiResponse
 import com.alduraimron.accountinggrow.data.remote.dto.SavingDto
+import com.alduraimron.accountinggrow.data.remote.dto.SavingRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -22,19 +24,19 @@ interface SavingApi {
 
     @POST("savings")
     suspend fun createSaving(
-        @Body saving: Map<String, Any>
+        @Body saving: SavingRequest
     ): Response<ApiResponse<SavingDto>>
 
     @PUT("savings/{id}")
     suspend fun updateSaving(
         @Path("id") id: String,
-        @Body saving: Map<String, Any>
+        @Body saving: SavingRequest
     ): Response<ApiResponse<SavingDto>>
 
     @POST("savings/{id}/add")
     suspend fun addToSaving(
         @Path("id") id: String,
-        @Body amount: Map<String, Double>
+        @Body amount: AddToSavingRequest
     ): Response<ApiResponse<SavingDto>>
 
     @DELETE("savings/{id}")

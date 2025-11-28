@@ -3,6 +3,7 @@ package com.alduraimron.accountinggrow.data.repository
 import android.util.Log
 import com.alduraimron.accountinggrow.data.local.TokenManager
 import com.alduraimron.accountinggrow.data.remote.api.UserApi
+import com.alduraimron.accountinggrow.data.remote.dto.UpdateProfileRequest
 import com.alduraimron.accountinggrow.domain.model.UserProfile
 import javax.inject.Inject
 import javax.inject.Singleton
@@ -59,14 +60,15 @@ class UserRepository @Inject constructor(
         return try {
             Log.d(TAG, "Updating user profile")
 
-            val requestBody = buildMap<String, String> {
-                firstName?.let { put("firstName", it) }
-                lastName?.let { put("lastName", it) }
-                phoneNumber?.let { put("phoneNumber", it) }
-                bio?.let { put("bio", it) }
-            }
 
-            val response = userApi.updateUserProfile(requestBody)
+            val request = UpdateProfileRequest(
+                firstName = firstName,
+                lastName = lastName,
+                phoneNumber = phoneNumber,
+                bio = bio
+            )
+
+            val response = userApi.updateUserProfile(request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data
@@ -106,12 +108,10 @@ class UserRepository @Inject constructor(
                 tokenManager.clearTokens()
                 Result.success("Logout berhasil")
             } else {
-                // Still clear local tokens even if API call fails
                 tokenManager.clearTokens()
                 Result.success("Logout berhasil")
             }
         } catch (e: Exception) {
-            // Still clear local tokens even on exception
             tokenManager.clearTokens()
             Log.e(TAG, "Exception during logout: ${e.message}", e)
             Result.success("Logout berhasil")

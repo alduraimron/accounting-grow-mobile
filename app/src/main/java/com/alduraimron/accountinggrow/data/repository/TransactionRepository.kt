@@ -2,6 +2,8 @@ package com.alduraimron.accountinggrow.data.repository
 
 import android.util.Log
 import com.alduraimron.accountinggrow.data.remote.api.TransactionApi
+import com.alduraimron.accountinggrow.data.remote.dto.TransactionRequest
+import com.alduraimron.accountinggrow.data.remote.dto.toTransaction
 import com.alduraimron.accountinggrow.domain.model.Category
 import com.alduraimron.accountinggrow.domain.model.Transaction
 import com.alduraimron.accountinggrow.domain.model.TransactionType
@@ -26,44 +28,21 @@ class TransactionRepository @Inject constructor(
         return try {
             Log.d(TAG, "Creating transaction: categoryId=$categoryId, type=$type, nominal=$nominal")
 
-            val requestBody = buildMap<String, Any> {
-                put("categoryId", categoryId)
-                put("type", type)
-                put("nominal", nominal)
-                put("date", date)
-                description?.let { put("description", it) }
-            }
+            // ✅ Gunakan data class TransactionRequest
+            val request = TransactionRequest(
+                categoryId = categoryId,
+                type = type,
+                nominal = nominal,
+                date = date,
+                description = description
+            )
 
-            val response = transactionApi.createTransaction(requestBody)
+            val response = transactionApi.createTransaction(request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data
                 if (dto != null) {
-                    val transaction = Transaction(
-                        id = dto.id,
-                        userId = dto.userId,
-                        categoryId = dto.categoryId,
-                        type = when (dto.type) {
-                            "INCOME" -> TransactionType.INCOME
-                            "EXPENSE" -> TransactionType.EXPENSE
-                            else -> TransactionType.EXPENSE
-                        },
-                        nominal = dto.nominal,
-                        description = dto.description,
-                        date = dto.date,
-                        createdAt = dto.createdAt,
-                        category = dto.category?.let { catDto ->
-                            Category(
-                                id = catDto.id,
-                                name = catDto.name,
-                                type = when (catDto.type) {
-                                    "INCOME" -> TransactionType.INCOME
-                                    "EXPENSE" -> TransactionType.EXPENSE
-                                    else -> TransactionType.EXPENSE
-                                }
-                            )
-                        }
-                    )
+                    val transaction = dto.toTransaction()
                     Log.d(TAG, "Transaction created successfully: ${transaction.id}")
                     Result.success(transaction)
                 } else {

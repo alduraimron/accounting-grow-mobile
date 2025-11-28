@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.repository
 
 import android.util.Log
 import com.alduraimron.accountinggrow.data.remote.api.ReminderApi
+import com.alduraimron.accountinggrow.data.remote.dto.ReminderRequest
 import com.alduraimron.accountinggrow.domain.model.Recurrence
 import com.alduraimron.accountinggrow.domain.model.Reminder
 import javax.inject.Inject
@@ -105,15 +106,16 @@ class ReminderRepository @Inject constructor(
         return try {
             Log.d(TAG, "Creating reminder: name=$name")
 
-            val requestBody = buildMap<String, Any> {
-                put("name", name)
-                put("dueDate", dueDate)
-                put("amount", amount)
-                put("recurrence", recurrence)
-                notes?.let { put("notes", it) }
-            }
+            // ✅ Gunakan ReminderRequest
+            val request = ReminderRequest(
+                name = name,
+                dueDate = dueDate,
+                amount = amount,
+                recurrence = recurrence,
+                notes = notes
+            )
 
-            val response = reminderApi.createReminder(requestBody)
+            val response = reminderApi.createReminder(request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data

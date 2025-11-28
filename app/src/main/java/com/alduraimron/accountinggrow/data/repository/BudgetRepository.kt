@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.repository
 
 import android.util.Log
 import com.alduraimron.accountinggrow.data.remote.api.BudgetApi
+import com.alduraimron.accountinggrow.data.remote.dto.BudgetRequest
 import com.alduraimron.accountinggrow.domain.model.Budget
 import com.alduraimron.accountinggrow.domain.model.BudgetType
 import com.alduraimron.accountinggrow.domain.model.Category
@@ -81,16 +82,17 @@ class BudgetRepository @Inject constructor(
         return try {
             Log.d(TAG, "Creating budget for category: $categoryId")
 
-            val requestBody = buildMap<String, Any> {
-                put("amount", amount)
-                put("budgetType", budgetType)
-                put("month", month)
-                put("year", year)
-                notes?.let { put("notes", it) }
-                put("categoryId", categoryId)
-            }
+            // ✅ Gunakan BudgetRequest
+            val request = BudgetRequest(
+                amount = amount,
+                budgetType = budgetType,
+                month = month,
+                year = year,
+                notes = notes,
+                categoryId = categoryId
+            )
 
-            val response = budgetApi.createBudget(requestBody)
+            val response = budgetApi.createBudget(request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data

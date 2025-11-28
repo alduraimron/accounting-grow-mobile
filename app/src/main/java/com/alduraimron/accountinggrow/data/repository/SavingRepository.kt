@@ -2,6 +2,8 @@ package com.alduraimron.accountinggrow.data.repository
 
 import android.util.Log
 import com.alduraimron.accountinggrow.data.remote.api.SavingApi
+import com.alduraimron.accountinggrow.data.remote.dto.AddToSavingRequest
+import com.alduraimron.accountinggrow.data.remote.dto.SavingRequest
 import com.alduraimron.accountinggrow.domain.model.FillingPlan
 import com.alduraimron.accountinggrow.domain.model.Saving
 import javax.inject.Inject
@@ -62,14 +64,15 @@ class SavingRepository @Inject constructor(
         return try {
             Log.d(TAG, "Creating saving: name=$name")
 
-            val requestBody = buildMap<String, Any> {
-                put("name", name)
-                put("targetAmount", targetAmount)
-                put("currentAmount", currentAmount)
-                put("fillingPlan", fillingPlan)
-            }
+            // ✅ Gunakan SavingRequest
+            val request = SavingRequest(
+                name = name,
+                targetAmount = targetAmount,
+                currentAmount = currentAmount,
+                fillingPlan = fillingPlan
+            )
 
-            val response = savingApi.createSaving(requestBody)
+            val response = savingApi.createSaving(request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data
@@ -110,7 +113,10 @@ class SavingRepository @Inject constructor(
         return try {
             Log.d(TAG, "Adding to saving: id=$id, amount=$amount")
 
-            val response = savingApi.addToSaving(id, mapOf("amount" to amount))
+            // ✅ Gunakan AddToSavingRequest
+            val request = AddToSavingRequest(amount = amount)
+
+            val response = savingApi.addToSaving(id, request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data

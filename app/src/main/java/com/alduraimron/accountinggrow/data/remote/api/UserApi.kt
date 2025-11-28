@@ -1,6 +1,8 @@
 package com.alduraimron.accountinggrow.data.remote.api
 
 import com.alduraimron.accountinggrow.data.remote.dto.ApiResponse
+import com.alduraimron.accountinggrow.data.remote.dto.ChangePasswordRequest
+import com.alduraimron.accountinggrow.data.remote.dto.UpdateProfileRequest
 import com.alduraimron.accountinggrow.data.remote.dto.UserDto
 import retrofit2.Response
 import retrofit2.http.Body
@@ -16,12 +18,12 @@ interface UserApi {
 
     @PUT("users/profile")
     suspend fun updateUserProfile(
-        @Body profile: Map<String, String>
+        @Body profile: UpdateProfileRequest
     ): Response<ApiResponse<UserDto>>
 
     @PUT("users/password")
     suspend fun changePassword(
-        @Body passwords: Map<String, String>
+        @Body passwords: ChangePasswordRequest
     ): Response<ApiResponse<Unit>>
 
     @POST("users/logout")

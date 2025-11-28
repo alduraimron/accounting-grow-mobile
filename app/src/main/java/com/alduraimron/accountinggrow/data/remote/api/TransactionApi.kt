@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.remote.api
 
 import com.alduraimron.accountinggrow.data.remote.dto.ApiResponse
 import com.alduraimron.accountinggrow.data.remote.dto.TransactionDto
+import com.alduraimron.accountinggrow.data.remote.dto.TransactionRequest
 import com.alduraimron.accountinggrow.data.remote.dto.TransactionSummaryDto
 import com.alduraimron.accountinggrow.data.remote.dto.TransactionsResponseDto
 import retrofit2.Response
@@ -33,7 +34,7 @@ interface TransactionApi {
 
     @POST("transactions")
     suspend fun createTransaction(
-        @Body transaction: Map<String, Any>
+        @Body transaction: TransactionRequest
     ): Response<ApiResponse<TransactionDto>>
 
     @GET("transactions/{id}")
@@ -44,7 +45,7 @@ interface TransactionApi {
     @PUT("transactions/{id}")
     suspend fun updateTransaction(
         @Path("id") id: String,
-        @Body transaction: Map<String, Any>
+        @Body transaction: TransactionRequest
     ): Response<ApiResponse<TransactionDto>>
 
     @DELETE("transactions/{id}")
