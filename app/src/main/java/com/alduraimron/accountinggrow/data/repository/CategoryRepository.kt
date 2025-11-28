@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.repository
 
 import android.util.Log
 import com.alduraimron.accountinggrow.data.remote.api.CategoryApi
+import com.alduraimron.accountinggrow.data.remote.dto.CategoryRequest
 import com.alduraimron.accountinggrow.domain.model.Category
 import com.alduraimron.accountinggrow.domain.model.TransactionType
 import javax.inject.Inject
@@ -22,12 +23,12 @@ class CategoryRepository @Inject constructor(
         return try {
             Log.d(TAG, "Creating category: name=$name, type=$type")
 
-            val requestBody = mapOf(
-                "name" to name,
-                "type" to type
+            val request = CategoryRequest(
+                name = name,
+                type = type
             )
 
-            val response = categoryApi.createCategory(requestBody)
+            val response = categoryApi.createCategory(request)
 
             if (response.isSuccessful && response.body()?.success == true) {
                 val dto = response.body()?.data

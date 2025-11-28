@@ -116,8 +116,8 @@ class TransactionViewModel @Inject constructor(
                 name = name,
                 type = type
             ).onSuccess {
-                // Reload categories
                 loadCategories()
+                _transactionState.value = _transactionState.value.copy(isLoading = false)
             }.onFailure { exception ->
                 _transactionState.value = _transactionState.value.copy(
                     errorMessage = exception.message,
@@ -132,7 +132,6 @@ class TransactionViewModel @Inject constructor(
             _transactionState.value = _transactionState.value.copy(isLoading = true)
 
             transactionRepository.deleteTransaction(id).onSuccess {
-                // Reload transactions after delete
                 loadTransactions(_transactionState.value.filterType)
             }.onFailure { exception ->
                 _transactionState.value = _transactionState.value.copy(

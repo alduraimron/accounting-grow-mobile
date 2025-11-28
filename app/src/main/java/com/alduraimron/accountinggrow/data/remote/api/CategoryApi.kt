@@ -2,6 +2,7 @@ package com.alduraimron.accountinggrow.data.remote.api
 
 import com.alduraimron.accountinggrow.data.remote.dto.ApiResponse
 import com.alduraimron.accountinggrow.data.remote.dto.CategoryDto
+import com.alduraimron.accountinggrow.data.remote.dto.CategoryRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -20,7 +21,7 @@ interface CategoryApi {
 
     @POST("categories")
     suspend fun createCategory(
-        @Body category: Map<String, Any>
+        @Body category: CategoryRequest
     ): Response<ApiResponse<CategoryDto>>
 
     @GET("categories/{id}")
@@ -31,7 +32,7 @@ interface CategoryApi {
     @PUT("categories/{id}")
     suspend fun updateCategory(
         @Path("id") id: String,
-        @Body category: Map<String, Any>
+        @Body category: CategoryRequest
     ): Response<ApiResponse<CategoryDto>>
 
     @DELETE("categories/{id}")
